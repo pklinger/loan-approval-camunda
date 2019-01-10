@@ -1,0 +1,1060 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:fox="http://www.camunda.com/fox" id="_tVhLcNA6EeOoXvm5vqfxTg" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.6.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="_Collaboration_3">
+    <bpmn2:participant id="LoanAssessment" name="Loan Assessment" processRef="LoanAssessmentProcess" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="LoanAssessmentProcess" name="Loan Assessment" isExecutable="true">
+    <bpmn2:laneSet id="LaneSet_1" name="Lane Set 1">
+      <bpmn2:lane id="Customer" name="Customer Mary">
+        <bpmn2:flowNodeRef>StartLoanApplication</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ApproveData</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>UpdateData</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ExclusiveGateway_0b30prt</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>LoanRejected</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>LoanAccepted</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>BoundaryEvent_1uzaw2l</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>EndEvent_0m8cm10</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="LoanOfficer" name="Loan Officer John">
+        <bpmn2:flowNodeRef>Insurance_Quote_Routing_Gateway_close</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>VerifyRepaymentAgreement</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>TakeFinalDecision</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>BoundaryEvent_2</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>AssessEligibility</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>PrepareAndSendAcceptancePack</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ExclusiveGateway_2</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ExclusiveGateway_FormStatus</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ExclusiveGateway_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>CheckFormCompleteness</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Insurance_Quote_Routing_Gateway_open</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>LoanApplicationNotEligible</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>LoanApplicationCanceled</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="InsuranceSalesRepresentative" name="Insurance Sales Representative Max">
+        <bpmn2:flowNodeRef>PrepareAndSendHomeInsuranceQuote</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="PropertyAppraiser" name="Property Appraiser Hans">
+        <bpmn2:flowNodeRef>AppraiseProperty</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="FInancialOfficerPeter" name="Finance Officer Peter">
+        <bpmn2:flowNodeRef>CheckCreditHistory</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>AssessLoanRisk</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Simultaneous_Operations_close</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Simultaneous_Operations_open</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:sequenceFlow id="SequenceFlow_11" name="" sourceRef="Simultaneous_Operations_close" targetRef="AssessEligibility" />
+    <bpmn2:sequenceFlow id="SequenceFlow_19" name="" sourceRef="PrepareAndSendHomeInsuranceQuote" targetRef="Insurance_Quote_Routing_Gateway_close" />
+    <bpmn2:dataObject id="DataObject_1" name="Data Object 1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_34" name="eligible" sourceRef="ExclusiveGateway_2" targetRef="PrepareAndSendAcceptancePack">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Eligibility_Status=='eligible'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_35" name="" sourceRef="PrepareAndSendAcceptancePack" targetRef="Insurance_Quote_Routing_Gateway_open" />
+    <bpmn2:sequenceFlow id="SequenceFlow_17" name="quote requested" sourceRef="Insurance_Quote_Routing_Gateway_open" targetRef="PrepareAndSendHomeInsuranceQuote">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Insurance_Quote_Required=='incomplete'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_18" name="quote not requested" sourceRef="Insurance_Quote_Routing_Gateway_open" targetRef="Insurance_Quote_Routing_Gateway_close">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Insurance_Quote_Required=='complete'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_20" name="" sourceRef="Insurance_Quote_Routing_Gateway_close" targetRef="VerifyRepaymentAgreement" />
+    <bpmn2:sequenceFlow id="SequenceFlow_21" name="" sourceRef="VerifyRepaymentAgreement" targetRef="TakeFinalDecision" />
+    <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="BoundaryEvent_2" targetRef="LoanApplicationCanceled" />
+    <bpmn2:sequenceFlow id="SequenceFlow_15" name="not eligible" sourceRef="ExclusiveGateway_2" targetRef="LoanApplicationNotEligible">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Eligibility_Status=='ineligible'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_041zpir" sourceRef="AssessEligibility" targetRef="ExclusiveGateway_2" />
+    <bpmn2:sequenceFlow id="SequenceFlow_4" name="complete" sourceRef="ExclusiveGateway_FormStatus" targetRef="Simultaneous_Operations_open">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Form_Status=='complete'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="Insurance_Quote_Routing_Gateway_close">
+      <bpmn2:incoming>SequenceFlow_18</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_19</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_20</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="VerifyRepaymentAgreement" name="Verify repayment agreement" camunda:assignee="john">
+      <bpmn2:documentation>Loan Officer verifies repayment agreement</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Account_Balance" label="Account_Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Property_Address" label="Property_Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Purchasing_Price" label="Purchasing_Price" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Amount" label="Loan_Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan_Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan_Start_Date" type="date">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest_Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Application_Submission_Date" label="Application_Submission_Date" type="string">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Credit_Assessment" label="Credit_Assessment" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Risk_Weight" label="Risk_Weight" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Repayment_Schedule_Monthly_Repayment_Amount" label="Repayment Schedule: Monthly Repayment Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Repayment_Schedule_Number_of_repayments" label="Repayment Schedule: Number of repayments" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Home_Insurance_Total_Cost" label="Home Insurance Total Cost" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Additional_Cost_on_monthly_loan_repayment" label="Additional Cost on monthly loan repayment" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Estimated_Value" label="Estimated Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Conditions_Agreed" label="Conditions Agreed" type="boolean" />
+          <camunda:formField id="Repayment_Agreed" label="Repayment Agreed" type="boolean" />
+          <camunda:formField id="Application_Status" label="Application_Status" type="enum">
+            <camunda:value id="rejected" name="Rejected" />
+            <camunda:value id="approved" name="Approved" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_20</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_21</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:boundaryEvent id="BoundaryEvent_2" name="5 min" attachedToRef="VerifyRepaymentAgreement">
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_2">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">P0DT0H5M0S</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:userTask id="TakeFinalDecision" name="Take final decision" camunda:assignee="john">
+      <bpmn2:documentation>Another loan officer reviews the loan application before the final decision is notified to the applicant</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Loan_Amount" label="Loan_Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan_Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan_Start_Date" type="string">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest_Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Risk_Weight" label="Risk_Weight" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Estimated_Value" label="Estimated_Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Application_Status" label="Application_Status" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Final_Decision" label="Final Decision" type="enum">
+            <camunda:value id="approve" name="approve" />
+            <camunda:value id="reject" name="reject" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_21</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1hrh4k2</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_10" name="" sourceRef="AppraiseProperty" targetRef="Simultaneous_Operations_close" />
+    <bpmn2:sequenceFlow id="SequenceFlow_30" name="" sourceRef="AssessLoanRisk" targetRef="Simultaneous_Operations_close" />
+    <bpmn2:sequenceFlow id="SequenceFlow_29" name="" sourceRef="CheckCreditHistory" targetRef="AssessLoanRisk" />
+    <bpmn2:sequenceFlow id="SequenceFlow_8" name="" sourceRef="Simultaneous_Operations_open" targetRef="AppraiseProperty">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Application_Status=='complete'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SequenceFlow_7" name="" sourceRef="Simultaneous_Operations_open" targetRef="CheckCreditHistory">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[Application_Status='complete']]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:userTask id="PrepareAndSendHomeInsuranceQuote" name="Prepare and send home insurance quote" camunda:assignee="max">
+      <bpmn2:documentation>Insurance Sales Representative prepares and sends insurance quote</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Home_Insurance_Total_Cost" label="Home Insurance Total Cost" type="long" />
+          <camunda:formField id="Additional_Cost_on_monthly_loan_repayment" label="Additional Cost on monthly loan repayment" type="long" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_17</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_19</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="AppraiseProperty" name="Appraise Property" camunda:assignee="hans">
+      <bpmn2:documentation>Property Appraisal is carried out by Property Appraiser</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Surrounding_Property_Value" label="Surrounding Property Value" type="long" />
+          <camunda:formField id="Estimated_Value" label="Estimated Value" type="long" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:parallelGateway id="Simultaneous_Operations_close">
+      <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_30</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:serviceTask id="AssessLoanRisk" name="Assess Loan Risk" camunda:class="org.camunda.bpm.getstarted.riskassessment.risk_assessment">
+      <bpmn2:documentation>Credit Risk ratings are assigned</bpmn2:documentation>
+      <bpmn2:incoming>SequenceFlow_29</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_30</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:userTask id="CheckCreditHistory" name="Check Credit History" camunda:assignee="peter">
+      <bpmn2:documentation>Credit History report is checked by Finance Officer</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Applicant_Name" label="Applicant_Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Email" label="Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Account_Balance" label="Account_Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Property_Address" label="Property_Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Purchasing_Price" label="Purchasing_Price" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Amount" label="Loan_Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan_Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan_Start_Date" type="date">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest_Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Application_Submission_Date" label="Application_Submission_Date" type="string">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Credit_Assessment" label="Credit_Assessment" type="enum">
+            <camunda:value id="B" name="B" />
+            <camunda:value id="BB" name="BB" />
+            <camunda:value id="BBB" name="BBB" />
+            <camunda:value id="A" name="A" />
+            <camunda:value id="AA" name="AA" />
+            <camunda:value id="AAA" name="AAA" />
+            <camunda:value id="Unrated" name="Unrated" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_29</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="AssessEligibility" name="Assess eligibility" camunda:assignee="john">
+      <bpmn2:documentation>Loan officer checks for eligibility</bpmn2:documentation>
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Applicant_Name" label="Applicant_Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Email" label="Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Account_Balance" label="Account_Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Property_Address" label="Property_Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Purchasing_Price" label="Purchasing_Price" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Amount" label="Loan_Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan_Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan_Start_Date" type="date">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest_Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Application_Submission_Date" label="Application_Submission_Date" type="string">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Surrounding_Property_Value" label="Surrounding Property Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Estimated_Value" label="Estimated Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Credit_Assessment" label="Credit_Assessment" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Risk_Weight" label="Risk_Weight" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Eligibility_Status" label="Eligibility_Status" type="enum">
+            <camunda:value id="eligible" name="eligible" />
+            <camunda:value id="ineligible" name="ineligible" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_041zpir</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="PrepareAndSendAcceptancePack" name="Prepare and Send Acceptance Pack" camunda:assignee="john">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Loan_Amount" label="Loan_Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan_Duration" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan_Start_Date" type="date">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest_Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Application_Submission_Date" label="Application_Submission_Date" type="string">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Estimated_Value" label="Estimated Value" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Credit_Assessment" label="Credit_Assessment" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Risk_Weight" label="Risk_Weight" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Repayment_Schedule_Monthly_Repayment_Amount" label="Repayment Schedule: Monthly Repayment Amount" type="long" />
+          <camunda:formField id="Repayment_Schedule_Number_of_repayments" label="Repayment Schedule: Number of repayments" type="long" />
+          <camunda:formField id="Insurance_Quote_Required" label="Insurance_Quote_Required" type="enum">
+            <camunda:value id="complete" name="complete" />
+            <camunda:value id="incomplete" name="incomplete" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_34</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_35</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_2">
+      <bpmn2:incoming>SequenceFlow_041zpir</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_34</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:startEvent id="StartLoanApplication" name="Start Loan Application">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Applicant_Name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Email" label="Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Account_Balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Property_Address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Purchasing_Price" label="Purchasing_Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan Duration" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan Start Date" type="date">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SequenceFlow_0</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0" sourceRef="StartLoanApplication" targetRef="ApproveData" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1" sourceRef="ApproveData" targetRef="ExclusiveGateway_1" />
+    <bpmn2:userTask id="ApproveData" name="Approve Data" camunda:assignee="mary">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Applicant_Name" label="Applicant Name" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Email" label="Email" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Account_Balance" label="Account Balance" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Property_Address" label="Property Address" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Purchasing_Price" label="Purchasing_Price" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Amount" label="Loan Amount" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Duration" label="Loan Duration" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Loan_Start_Date" label="Loan Start Date" type="date">
+            <camunda:properties>
+              <camunda:property id="datePattern" value="DD/MM/YYYY" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Interest_Rate" label="Interest Rate" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_FormStatus" name="Form Status?">
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3_1</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" sourceRef="CheckFormCompleteness" targetRef="ExclusiveGateway_FormStatus" />
+    <bpmn2:sequenceFlow id="SequenceFlow_3_1" name="incomplete" sourceRef="ExclusiveGateway_FormStatus" targetRef="UpdateData">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Form_Status=='incomplete'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_1">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_3_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0kwmqp2</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_0kwmqp2" sourceRef="ExclusiveGateway_1" targetRef="CheckFormCompleteness" />
+    <bpmn2:userTask id="UpdateData" name="Update Data" camunda:assignee="mary">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Email" label="Please enter a correct e-mail address!" type="string" />
+        </camunda:formData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_3_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3_2</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_3_2" sourceRef="UpdateData" targetRef="ExclusiveGateway_1" />
+    <bpmn2:parallelGateway id="Simultaneous_Operations_open">
+      <bpmn2:documentation>Credit History checks and Appraise Property tasks take place in parallel</bpmn2:documentation>
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:exclusiveGateway id="ExclusiveGateway_0b30prt">
+      <bpmn2:incoming>SequenceFlow_1hrh4k2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0cnic8f</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_1jvglaw</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_1hrh4k2" sourceRef="TakeFinalDecision" targetRef="ExclusiveGateway_0b30prt" />
+    <bpmn2:endEvent id="LoanRejected" name="Loan Rejected">
+      <bpmn2:incoming>SequenceFlow_0cnic8f</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0cnic8f" sourceRef="ExclusiveGateway_0b30prt" targetRef="LoanRejected">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Final_Decision=='reject'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="LoanAccepted" name="Loan Accepted">
+      <bpmn2:incoming>SequenceFlow_1jvglaw</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1jvglaw" sourceRef="ExclusiveGateway_0b30prt" targetRef="LoanAccepted">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${Final_Decision=='approve'}]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:scriptTask id="CheckFormCompleteness" name="Check Form Completeness" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0kwmqp2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+      <bpmn2:script><![CDATA[if(Email ==~ /[a-z_][a-z0-9_]+@[a-z0-9_.?]+.[a-z]{1,3}/){
+	execution.setVariable ("Form_Status", "complete");
+	}
+	else {
+		execution.setVariable ("Form_Status", "incomplete");
+		execution.setVariable ("Email", "Wrong Format");
+	}
+execution.setVariable ("Application_Submission_Date", (new Date ()).format("dd/MM/yyyy"));]]></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:boundaryEvent id="BoundaryEvent_1uzaw2l" name="5 min" attachedToRef="UpdateData">
+      <bpmn2:outgoing>SequenceFlow_3_1_1</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition>
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">P0DT0H5M0S</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_3_1_1" sourceRef="BoundaryEvent_1uzaw2l" targetRef="EndEvent_0m8cm10" />
+    <bpmn2:endEvent id="EndEvent_0m8cm10" name="Loan Application Canceld due to inactivity">
+      <bpmn2:incoming>SequenceFlow_3_1_1</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition />
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="Insurance_Quote_Routing_Gateway_open" name="Insurance Quote?">
+      <bpmn2:documentation>Insurance quote test condition</bpmn2:documentation>
+      <bpmn2:incoming>SequenceFlow_35</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_17</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:endEvent id="LoanApplicationNotEligible" name="Loan Application Not Eligible">
+      <bpmn2:incoming>SequenceFlow_15</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:endEvent id="LoanApplicationCanceled" name="Loan Application Canceled">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+    </bpmn2:endEvent>
+  </bpmn2:process>
+  <bpmn2:message id="Message_11j9866" name="SendInitialApplicationMessage" />
+  <bpmn2:message id="Message_0ohh718" name="Update" />
+  <bpmn2:message id="Message_0xab1gi" name="SendUpdateMessage" />
+  <bpmn2:message id="Message_1mfryap" name="SendRejectionMessage" />
+  <bpmn2:message id="Message_0heudzm" name="SendAcceptanceMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="_Collaboration_3">
+      <bpmndi:BPMNShape id="_BPMNShape_Participant_3" bpmnElement="LoanAssessment" isHorizontal="true">
+        <dc:Bounds x="9" y="366" width="1878" height="972" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_Lane_9" bpmnElement="FInancialOfficerPeter" isHorizontal="true">
+        <dc:Bounds x="39" y="928" width="1848" height="139" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_Lane_10" bpmnElement="PropertyAppraiser" isHorizontal="true">
+        <dc:Bounds x="39" y="1067" width="1848" height="132" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_Lane_11" bpmnElement="InsuranceSalesRepresentative" isHorizontal="true">
+        <dc:Bounds x="39" y="1199" width="1848" height="139" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ParallelGateway_4" bpmnElement="Simultaneous_Operations_open">
+        <dc:Bounds x="327" y="967" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="352" y="1022" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_15" bpmnElement="CheckCreditHistory">
+        <dc:Bounds x="412" y="952" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_7" sourceElement="_BPMNShape_ParallelGateway_4" targetElement="_BPMNShape_UserTask_15">
+        <di:waypoint xsi:type="dc:Point" x="376" y="993" />
+        <di:waypoint xsi:type="dc:Point" x="412" y="992" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="977.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_16" bpmnElement="AppraiseProperty">
+        <dc:Bounds x="482" y="1099" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="_BPMNShape_ParallelGateway_4" targetElement="_BPMNShape_UserTask_16">
+        <di:waypoint xsi:type="dc:Point" x="352" y="1017" />
+        <di:waypoint xsi:type="dc:Point" x="352" y="1139" />
+        <di:waypoint xsi:type="dc:Point" x="482" y="1139" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="367" y="1078" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ParallelGateway_5" bpmnElement="Simultaneous_Operations_close">
+        <dc:Bounds x="713" y="967" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="738" y="1022" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_10" bpmnElement="SequenceFlow_10" sourceElement="_BPMNShape_UserTask_16" targetElement="_BPMNShape_ParallelGateway_5">
+        <di:waypoint xsi:type="dc:Point" x="582" y="1139" />
+        <di:waypoint xsi:type="dc:Point" x="739" y="1139" />
+        <di:waypoint xsi:type="dc:Point" x="739" y="1016" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="661" y="1124" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_17" bpmnElement="AssessEligibility">
+        <dc:Bounds x="688" y="778" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_11" bpmnElement="SequenceFlow_11" sourceElement="_BPMNShape_ParallelGateway_5" targetElement="_BPMNShape_UserTask_17">
+        <di:waypoint xsi:type="dc:Point" x="738" y="967" />
+        <di:waypoint xsi:type="dc:Point" x="738" y="913" />
+        <di:waypoint xsi:type="dc:Point" x="738" y="913" />
+        <di:waypoint xsi:type="dc:Point" x="738" y="858" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="753" y="913" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_7" bpmnElement="ExclusiveGateway_2" isMarkerVisible="true">
+        <dc:Bounds x="826" y="793" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="851" y="848" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_8" bpmnElement="Insurance_Quote_Routing_Gateway_open" isMarkerVisible="true">
+        <dc:Bounds x="1087" y="842" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1068" y="897" width="88" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_19" bpmnElement="PrepareAndSendHomeInsuranceQuote">
+        <dc:Bounds x="1142" y="1231" width="100" height="85" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_17" bpmnElement="SequenceFlow_17" sourceElement="_BPMNShape_ExclusiveGateway_8" targetElement="_BPMNShape_UserTask_19">
+        <di:waypoint xsi:type="dc:Point" x="1112" y="892" />
+        <di:waypoint xsi:type="dc:Point" x="1112" y="1274" />
+        <di:waypoint xsi:type="dc:Point" x="1142" y="1274" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1118" y="907.2112211221123" width="79" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ExclusiveGateway_9" bpmnElement="Insurance_Quote_Routing_Gateway_close" isMarkerVisible="true">
+        <dc:Bounds x="1257" y="618" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1282" y="673" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_18" bpmnElement="SequenceFlow_18" sourceElement="_BPMNShape_ExclusiveGateway_8" targetElement="_BPMNShape_ExclusiveGateway_9">
+        <di:waypoint xsi:type="dc:Point" x="1112" y="842" />
+        <di:waypoint xsi:type="dc:Point" x="1112" y="643" />
+        <di:waypoint xsi:type="dc:Point" x="1257" y="643" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1117.5" y="735.4384615384615" width="49" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_19" bpmnElement="SequenceFlow_19" sourceElement="_BPMNShape_UserTask_19" targetElement="_BPMNShape_ExclusiveGateway_9">
+        <di:waypoint xsi:type="dc:Point" x="1242" y="1274" />
+        <di:waypoint xsi:type="dc:Point" x="1282" y="1274" />
+        <di:waypoint xsi:type="dc:Point" x="1282" y="668" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1262" y="1259" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_20" bpmnElement="VerifyRepaymentAgreement">
+        <dc:Bounds x="1342" y="603" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_20" bpmnElement="SequenceFlow_20" sourceElement="_BPMNShape_ExclusiveGateway_9" targetElement="_BPMNShape_UserTask_20">
+        <di:waypoint xsi:type="dc:Point" x="1307" y="643" />
+        <di:waypoint xsi:type="dc:Point" x="1342" y="643" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1325" y="628" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_21" bpmnElement="TakeFinalDecision">
+        <dc:Bounds x="1538" y="603" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_21" bpmnElement="SequenceFlow_21" sourceElement="_BPMNShape_UserTask_20" targetElement="_BPMNShape_UserTask_21">
+        <di:waypoint xsi:type="dc:Point" x="1442" y="643" />
+        <di:waypoint xsi:type="dc:Point" x="1490" y="643" />
+        <di:waypoint xsi:type="dc:Point" x="1490" y="643" />
+        <di:waypoint xsi:type="dc:Point" x="1538" y="643" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1505" y="643" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_ServiceTask_2" bpmnElement="AssessLoanRisk">
+        <dc:Bounds x="560" y="949" width="100" height="85" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_29" bpmnElement="SequenceFlow_29" sourceElement="_BPMNShape_UserTask_15" targetElement="_BPMNShape_ServiceTask_2">
+        <di:waypoint xsi:type="dc:Point" x="512" y="992" />
+        <di:waypoint xsi:type="dc:Point" x="560" y="991" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="536" y="977" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_30" bpmnElement="SequenceFlow_30" sourceElement="_BPMNShape_ServiceTask_2" targetElement="_BPMNShape_ParallelGateway_5">
+        <di:waypoint xsi:type="dc:Point" x="660" y="992" />
+        <di:waypoint xsi:type="dc:Point" x="713" y="992" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="687" y="977" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_BoundaryEvent_3" bpmnElement="BoundaryEvent_2">
+        <dc:Bounds x="1368" y="665" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1327" y="689" width="27" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="_BPMNShape_BoundaryEvent_3" targetElement="EndEvent_04rvbex_di">
+        <di:waypoint xsi:type="dc:Point" x="1386" y="701" />
+        <di:waypoint xsi:type="dc:Point" x="1386" y="738" />
+        <di:waypoint xsi:type="dc:Point" x="1695" y="738" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1401" y="719.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_UserTask_35" bpmnElement="PrepareAndSendAcceptancePack">
+        <dc:Bounds x="898" y="827" width="100" height="85" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_34" bpmnElement="SequenceFlow_34" sourceElement="_BPMNShape_ExclusiveGateway_7" targetElement="_BPMNShape_UserTask_35">
+        <di:waypoint xsi:type="dc:Point" x="851" y="843" />
+        <di:waypoint xsi:type="dc:Point" x="851" y="870" />
+        <di:waypoint xsi:type="dc:Point" x="898" y="870" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="833" y="874.0298430701663" width="35" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_35" bpmnElement="SequenceFlow_35" sourceElement="_BPMNShape_UserTask_35" targetElement="_BPMNShape_ExclusiveGateway_8">
+        <di:waypoint xsi:type="dc:Point" x="998" y="867" />
+        <di:waypoint xsi:type="dc:Point" x="1043" y="867" />
+        <di:waypoint xsi:type="dc:Point" x="1043" y="867" />
+        <di:waypoint xsi:type="dc:Point" x="1087" y="867" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1013" y="867" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_Lane_14" bpmnElement="Customer" isHorizontal="true">
+        <dc:Bounds x="39" y="366" width="1848" height="224" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_10" bpmnElement="StartLoanApplication">
+        <dc:Bounds x="125" y="463" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="115" y="506" width="56" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_15" bpmnElement="SequenceFlow_15">
+        <di:waypoint xsi:type="dc:Point" x="851" y="793" />
+        <di:waypoint xsi:type="dc:Point" x="851" y="683" />
+        <di:waypoint xsi:type="dc:Point" x="930" y="683" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="862" y="750" width="53" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_041zpir_di" bpmnElement="SequenceFlow_041zpir">
+        <di:waypoint xsi:type="dc:Point" x="788" y="818" />
+        <di:waypoint xsi:type="dc:Point" x="826" y="818" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="807" y="803" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1gb93i8_di" bpmnElement="ApproveData">
+        <dc:Bounds x="196" y="441" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dhxljk_di" bpmnElement="SequenceFlow_4">
+        <di:waypoint xsi:type="dc:Point" x="353" y="816" />
+        <di:waypoint xsi:type="dc:Point" x="353" y="885" />
+        <di:waypoint xsi:type="dc:Point" x="352" y="967" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="359" y="848.5" width="45" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lane_0ideqqq_di" bpmnElement="LoanOfficer">
+        <dc:Bounds x="39" y="590" width="1848" height="338" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12d2kji_di" bpmnElement="SequenceFlow_0">
+        <di:waypoint xsi:type="dc:Point" x="161" y="481" />
+        <di:waypoint xsi:type="dc:Point" x="196" y="481" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="466" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xh4qsm_di" bpmnElement="SequenceFlow_1">
+        <di:waypoint xsi:type="dc:Point" x="246" y="521" />
+        <di:waypoint xsi:type="dc:Point" x="246" y="629" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="261" y="575" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_11m8r3d_di" bpmnElement="ExclusiveGateway_FormStatus" isMarkerVisible="true">
+        <dc:Bounds x="327.8255813953488" y="766" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="320" y="747" width="66" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0q6b15o_di" bpmnElement="SequenceFlow_3">
+        <di:waypoint xsi:type="dc:Point" x="296" y="791" />
+        <di:waypoint xsi:type="dc:Point" x="328" y="791" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="312" y="776" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1hz127m_di" bpmnElement="SequenceFlow_3_1">
+        <di:waypoint xsi:type="dc:Point" x="378" y="791" />
+        <di:waypoint xsi:type="dc:Point" x="462" y="791" />
+        <di:waypoint xsi:type="dc:Point" x="462" y="521" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="467" y="731" width="54" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_01aotlx_di" bpmnElement="ExclusiveGateway_1" isMarkerVisible="true">
+        <dc:Bounds x="221" y="629.3267441860465" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="246" y="679.3267441860465" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kwmqp2_di" bpmnElement="SequenceFlow_0kwmqp2">
+        <di:waypoint xsi:type="dc:Point" x="246" y="679" />
+        <di:waypoint xsi:type="dc:Point" x="246" y="751" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="261" y="715" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0k65krj_di" bpmnElement="UpdateData">
+        <dc:Bounds x="412" y="441" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lzfp2z_di" bpmnElement="SequenceFlow_3_2">
+        <di:waypoint xsi:type="dc:Point" x="412" y="481" />
+        <di:waypoint xsi:type="dc:Point" x="315" y="481" />
+        <di:waypoint xsi:type="dc:Point" x="315" y="654" />
+        <di:waypoint xsi:type="dc:Point" x="271" y="654" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="330" y="567.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0b30prt_di" bpmnElement="ExclusiveGateway_0b30prt" isMarkerVisible="true">
+        <dc:Bounds x="1563" y="456" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1588" y="506" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1hrh4k2_di" bpmnElement="SequenceFlow_1hrh4k2">
+        <di:waypoint xsi:type="dc:Point" x="1588" y="603" />
+        <di:waypoint xsi:type="dc:Point" x="1588" y="506" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1603" y="544.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1hahgge_di" bpmnElement="LoanRejected">
+        <dc:Bounds x="1694.6237762237763" y="463" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1677" y="499" width="71" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cnic8f_di" bpmnElement="SequenceFlow_0cnic8f">
+        <di:waypoint xsi:type="dc:Point" x="1613" y="481" />
+        <di:waypoint xsi:type="dc:Point" x="1695" y="481" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1654" y="456" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0brvcfy_di" bpmnElement="LoanAccepted">
+        <dc:Bounds x="1695" y="376.5272727272727" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1676" y="412.5272727272727" width="74" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jvglaw_di" bpmnElement="SequenceFlow_1jvglaw">
+        <di:waypoint xsi:type="dc:Point" x="1588" y="456" />
+        <di:waypoint xsi:type="dc:Point" x="1588" y="395" />
+        <di:waypoint xsi:type="dc:Point" x="1695" y="395" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1603" y="415.5" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_17n28xt_di" bpmnElement="CheckFormCompleteness">
+        <dc:Bounds x="196" y="751" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1p0gmg4_di" bpmnElement="BoundaryEvent_1uzaw2l">
+        <dc:Bounds x="476" y="503" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="480" y="539" width="27" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w7pd5f_di" bpmnElement="SequenceFlow_3_1_1">
+        <di:waypoint xsi:type="dc:Point" x="512" y="521" />
+        <di:waypoint xsi:type="dc:Point" x="570" y="521" />
+        <di:waypoint xsi:type="dc:Point" x="570" y="521" />
+        <di:waypoint xsi:type="dc:Point" x="627" y="521" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="521" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0tss07x_di" bpmnElement="EndEvent_0m8cm10">
+        <dc:Bounds x="627" y="503" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="602" y="539" width="85" height="38" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0fmzc3l_di" bpmnElement="LoanApplicationNotEligible">
+        <dc:Bounds x="930" y="665" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="905" y="701" width="85" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_04rvbex_di" bpmnElement="LoanApplicationCanceled">
+        <dc:Bounds x="1695" y="720" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1670" y="758" width="85" height="25" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
