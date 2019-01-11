@@ -1,3 +1,8 @@
+## 0. Download camunda-bpm-tomcat-7.9.0
+
+extract anywhere, run `start-camunda.{bat|sh}` 
+To deploy process models, follow step 3
+
 ## 1. Install maven
 
 Make sure maven is installed
@@ -5,7 +10,7 @@ https://maven.apache.org/install.html
 
 check if maven is installed: `mvn -version` on your command line
 
-## 2. build project from main directory
+## 2. build this project from main directory
 
 type
 `mvn clean`
